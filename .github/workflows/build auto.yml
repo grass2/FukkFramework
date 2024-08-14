@@ -9,12 +9,14 @@ jobs:
   build-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Checkout source
-        run: |
-          git remote add upstream https://github.com/chiteroman/FrameworkPatch.git
-          git fetch upstream main
-          git checkout upstream/main
+      # - uses: actions/checkout@v4
+      # - name: Checkout source
+      #   run: |
+      #     git remote add upstream https://github.com/chiteroman/FrameworkPatch.git
+      #     git fetch upstream main
+      #     git checkout upstream/main
+      - name: Checkout repos
+        uses: actions/checkout@main
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -59,7 +61,7 @@ jobs:
           git clone --depth 1 https://github.com/tryigit/PlayIntegrityFix.git
           
           sudo chmod 777 -R ./*
-          ls
+          ls -la
           # Duyệt qua các tệp XML và thực hiện thay thế
           for XML_FILE in "PlayIntegrityFix/Leaked Keyboxs"/*/*.xml; do
             # Lấy thông tin từ tệp XML
