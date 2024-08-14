@@ -59,7 +59,7 @@ jobs:
           git clone --depth 1 https://github.com/tryigit/PlayIntegrityFix.git
           
           sudo chmod 777 -R ./*
-          
+          ls
           # Duyệt qua các tệp XML và thực hiện thay thế
           for XML_FILE in "PlayIntegrityFix/Leaked Keyboxs"/*/*.xml; do
             # Lấy thông tin từ tệp XML
