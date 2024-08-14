@@ -102,6 +102,7 @@ jobs:
             fi
             
             # Sao chép tệp dex vào thư mục out
+            mkdir out
             sudo mv "$DexFile" out/"$BasenameXML_FILE".dex
           done
 
