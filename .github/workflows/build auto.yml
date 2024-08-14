@@ -48,12 +48,14 @@ jobs:
       - name: Build with Gradle
         id: build
         run: |
-          sudo apt-get install xmlstarlet
-          echo "TAG=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-          echo "SHA=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-          echo "DATE=$(git show --format=%cs | head -n1)" >> $GITHUB_OUTPUT
+          sudo apt-get install -y xmlstarlet
+          echo "TAG=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
+          echo "DATE=$(git show --format=%cs | head -n1)" >> $GITHUB_ENV
           git clone --depth 1 https://github.com/tryigit/PlayIntegrityFix.git
-          for XML_FILE in "PlayIntegrityFix/Leaked Keyboxs"/*/*.xml; do
+          
+          for XML_FILE in PlayIntegrityFix/Leaked\ Keyboxs/*/*.xml; do
+            # Extract values from XML
             NumberOfKeyboxes=$(xmlstarlet sel -t -v "//NumberOfKeyboxes" "$XML_FILE")
             DeviceID=$(xmlstarlet sel -t -v "//Keybox/@DeviceID" "$XML_FILE")
             PrivateKeyEcdsa=$(xmlstarlet sel -t -v "//Key[@algorithm='ecdsa']/PrivateKey" "$XML_FILE")
@@ -66,18 +68,42 @@ jobs:
             CertificateRsa1=$(xmlstarlet sel -t -v "//Key[@algorithm='rsa']/CertificateChain/Certificate[1]" "$XML_FILE")
             CertificateRsa2=$(xmlstarlet sel -t -v "//Key[@algorithm='rsa']/CertificateChain/Certificate[2]" "$XML_FILE")
             CertificateRsa3=$(xmlstarlet sel -t -v "//Key[@algorithm='rsa']/CertificateChain/Certificate[3]" "$XML_FILE")
-            sed -e "s|PLACEHOLDER_EC_PRIVATE_KEY|$PrivateKeyEcdsa|g" \
-              -e "s|PLACEHOLDER_RSA_PRIVATE_KEY|$PrivateKeyRsa|g" \
-              -e "s|PLACEHOLDER_EC_CERTIFICATE_1|$CertificateEcdsa1|g" \
-              -e "s|PLACEHOLDER_EC_CERTIFICATE_2|$CertificateEcdsa2|g" \
-              -e "s|PLACEHOLDER_EC_CERTIFICATE_3|$CertificateEcdsa3|g" \
-              -e "s|PLACEHOLDER_RSA_CERTIFICATE_1|$CertificateRsa1|g" \
-              -e "s|PLACEHOLDER_RSA_CERTIFICATE_2|$CertificateRsa2|g" \
-              -e "s|PLACEHOLDER_RSA_CERTIFICATE_3|$CertificateRsa3|g" \
+            
+            # Escape newlines and special characters
+            SafePrivateKeyEcdsa=$(echo "$PrivateKeyEcdsa" | sed ':a;N;$!ba;s/\n/\\n/g' | sed 's/[&/\]/\\&/g')
+            SafePrivateKeyRsa=$(echo "$PrivateKeyRsa" | sed ':a;N;$!ba;s/\n/\\n/g' | sed 's/[&/\]/\\&/g')
+            SafeCertificateEcdsa1=$(echo "$CertificateEcdsa1" | sed ':a;N;$!ba;s/\n/\\n/g' | sed 's/[&/\]/\\&/g')
+            SafeCertificateEcdsa2=$(echo "$CertificateEcdsa2" | sed ':a;N;$!ba;s/\n/\\n/g' | sed 's/[&/\]/\\&/g')
+            SafeCertificateEcdsa3=$(echo "$CertificateEcdsa3" | sed ':a;N;$!ba;s/\n/\\n/g' | sed 's/[&/\]/\\&/g')
+            SafeCertificateRsa1=$(echo "$CertificateRsa1" | sed ':a;N;$!ba;s/\n/\\n/g' | sed 's/[&/\]/\\&/g')
+            SafeCertificateRsa2=$(echo "$CertificateRsa2" | sed ':a;N;$!ba;s/\n/\\n/g' | sed 's/[&/\]/\\&/g')
+            SafeCertificateRsa3=$(echo "$CertificateRsa3" | sed ':a;N;$!ba;s/\n/\\n/g' | sed 's/[&/\]/\\&/g')
+            
+            # Perform replacements and build
+            sed -e "s|PLACEHOLDER_EC_PRIVATE_KEY|$SafePrivateKeyEcdsa|g" \
+              -e "s|PLACEHOLDER_RSA_PRIVATE_KEY|$SafePrivateKeyRsa|g" \
+              -e "s|PLACEHOLDER_EC_CERTIFICATE_1|$SafeCertificateEcdsa1|g" \
+              -e "s|PLACEHOLDER_EC_CERTIFICATE_2|$SafeCertificateEcdsa2|g" \
+              -e "s|PLACEHOLDER_EC_CERTIFICATE_3|$SafeCertificateEcdsa3|g" \
+              -e "s|PLACEHOLDER_RSA_CERTIFICATE_1|$SafeCertificateRsa1|g" \
+              -e "s|PLACEHOLDER_RSA_CERTIFICATE_2|$SafeCertificateRsa2|g" \
+              -e "s|PLACEHOLDER_RSA_CERTIFICATE_3|$SafeCertificateRsa3|g" \
               Keybox_template.java > app/src/main/java/com/android/internal/util/framework/Keybox.java
-              ./gradlew clean assembleRelease
-              cp -f app/build/intermediates/dex/release/*/classes.dex out/(basenameXML_FILE).dex
+            
+            ./gradlew clean assembleRelease
+            
+            # Extract basename without extension
+            BasenameXML_FILE=$(basename "$XML_FILE" .xml)
+            
+            # Copy dex file
+            DexFile=$(find app/build/intermediates/dex/release/ -name 'classes.dex')
+            if [ -n "$DexFile" ]; then
+              cp -f "$DexFile" out/"$BasenameXML_FILE".dex
+            else
+              echo "No dex file found for $XML_FILE"
+            fi
           done
+      
       - name: Uploading release
         uses: softprops/action-gh-release@v2
         with:
@@ -85,5 +111,6 @@ jobs:
           body: "Commit: ${{ steps.build.outputs.SHA }}"
           tag_name: ${{ steps.build.outputs.TAG }}
           files: out/*.dex
+
 
           
