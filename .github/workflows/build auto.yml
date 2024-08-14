@@ -1,0 +1,59 @@
+name: Build auto
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Checkout source
+        run: |
+          git remote add upstream https://github.com/chiteroman/FrameworkPatch.git
+          git fetch upstream main
+          git checkout upstream/main
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-home-cache-cleanup: true
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # - name: Build with Gradle
+      #   id: build
+      #   run: |
+      #     echo "TAG=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      #     echo "SHA=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+      #     echo "DATE=$(git show --format=%cs | head -n1)" >> $GITHUB_OUTPUT
+      #     ./gradlew clean assembleRelease
+
+      # - name: Uploading release
+      #   uses: softprops/action-gh-release@v2
+      #   with:
+      #     name: ${{ steps.build.outputs.DATE }}
+      #     body: "Commit: ${{ steps.build.outputs.SHA }}"
+      #     tag_name: ${{ steps.build.outputs.TAG }}
+      #     files: app/build/intermediates/dex/release/*/classes.dex
+      - name: Build with Gradle
+        id: build
+        run: |
+          echo "TAG=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "SHA=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "DATE=$(git show --format=%cs | head -n1)" >> $GITHUB_OUTPUT
+          git clone --depth 1 https://github.com/tryigit/PlayIntegrityFix.git
+          for xml_file in "PlayIntegrityFix/Leaked Keyboxs"/*/*.xml; do
+                 #TODO edit keybox
+                 
+               ./gradlew clean assembleRelease
+          done
