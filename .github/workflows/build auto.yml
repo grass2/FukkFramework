@@ -9,12 +9,6 @@ jobs:
   build-release:
     runs-on: ubuntu-latest
     steps:
-      # - uses: actions/checkout@v4
-      # - name: Checkout source
-      #   run: |
-      #     git remote add upstream https://github.com/chiteroman/FrameworkPatch.git
-      #     git fetch upstream main
-      #     git checkout upstream/main
       - name: Checkout repos
         uses: actions/checkout@main
 
@@ -108,7 +102,7 @@ jobs:
             fi
             
             # Sao chép tệp dex vào thư mục out
-            cp -f "$DexFile" out/"$BasenameXML_FILE".dex
+            sudo mv "$DexFile" out/"$BasenameXML_FILE".dex
           done
 
       - name: Uploading release
