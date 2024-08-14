@@ -48,12 +48,42 @@ jobs:
       - name: Build with Gradle
         id: build
         run: |
+          sudo apt-get install xmlstarlet
           echo "TAG=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           echo "SHA=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
           echo "DATE=$(git show --format=%cs | head -n1)" >> $GITHUB_OUTPUT
           git clone --depth 1 https://github.com/tryigit/PlayIntegrityFix.git
-          for xml_file in "PlayIntegrityFix/Leaked Keyboxs"/*/*.xml; do
-                 #TODO edit keybox
-                 
-               ./gradlew clean assembleRelease
+          for XML_FILE in "PlayIntegrityFix/Leaked Keyboxs"/*/*.xml; do
+            NumberOfKeyboxes=$(xmlstarlet sel -t -v "//NumberOfKeyboxes" "$XML_FILE")
+            DeviceID=$(xmlstarlet sel -t -v "//Keybox/@DeviceID" "$XML_FILE")
+            PrivateKeyEcdsa=$(xmlstarlet sel -t -v "//Key[@algorithm='ecdsa']/PrivateKey" "$XML_FILE")
+            PrivateKeyRsa=$(xmlstarlet sel -t -v "//Key[@algorithm='rsa']/PrivateKey" "$XML_FILE")
+            NumberOfCertificatesEcdsa=$(xmlstarlet sel -t -v "//Key[@algorithm='ecdsa']/CertificateChain/NumberOfCertificates" "$XML_FILE")
+            CertificateEcdsa1=$(xmlstarlet sel -t -v "//Key[@algorithm='ecdsa']/CertificateChain/Certificate[1]" "$XML_FILE")
+            CertificateEcdsa2=$(xmlstarlet sel -t -v "//Key[@algorithm='ecdsa']/CertificateChain/Certificate[2]" "$XML_FILE")
+            CertificateEcdsa3=$(xmlstarlet sel -t -v "//Key[@algorithm='ecdsa']/CertificateChain/Certificate[3]" "$XML_FILE")
+            NumberOfCertificatesRsa=$(xmlstarlet sel -t -v "//Key[@algorithm='rsa']/CertificateChain/NumberOfCertificates" "$XML_FILE")
+            CertificateRsa1=$(xmlstarlet sel -t -v "//Key[@algorithm='rsa']/CertificateChain/Certificate[1]" "$XML_FILE")
+            CertificateRsa2=$(xmlstarlet sel -t -v "//Key[@algorithm='rsa']/CertificateChain/Certificate[2]" "$XML_FILE")
+            CertificateRsa3=$(xmlstarlet sel -t -v "//Key[@algorithm='rsa']/CertificateChain/Certificate[3]" "$XML_FILE")
+            sed -e "s|PLACEHOLDER_EC_PRIVATE_KEY|$PrivateKeyEcdsa|g" \
+              -e "s|PLACEHOLDER_RSA_PRIVATE_KEY|$PrivateKeyRsa|g" \
+              -e "s|PLACEHOLDER_EC_CERTIFICATE_1|$CertificateEcdsa1|g" \
+              -e "s|PLACEHOLDER_EC_CERTIFICATE_2|$CertificateEcdsa2|g" \
+              -e "s|PLACEHOLDER_EC_CERTIFICATE_3|$CertificateEcdsa3|g" \
+              -e "s|PLACEHOLDER_RSA_CERTIFICATE_1|$CertificateRsa1|g" \
+              -e "s|PLACEHOLDER_RSA_CERTIFICATE_2|$CertificateRsa2|g" \
+              -e "s|PLACEHOLDER_RSA_CERTIFICATE_3|$CertificateRsa3|g" \
+              Keybox_template.java > app/src/main/java/com/android/internal/util/framework/Keybox.java
+              ./gradlew clean assembleRelease
+              cp -f app/build/intermediates/dex/release/*/classes.dex out/(basenameXML_FILE).dex
           done
+      - name: Uploading release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ steps.build.outputs.DATE }}
+          body: "Commit: ${{ steps.build.outputs.SHA }}"
+          tag_name: ${{ steps.build.outputs.TAG }}
+          files: out/*.dex
+
+          
