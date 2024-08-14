@@ -92,7 +92,7 @@ jobs:
             
             echo "Đã thay thế!!"
             # Chạy Gradle
-            ./gradlew clean assembleRelease
+            ./gradlew clean assembleRelease >/dev/null 2>&1
             
             # Kiểm tra và sao chép tệp dex
             DexFile=$(find app/build/intermediates/dex/release/ -name 'classes.dex')
