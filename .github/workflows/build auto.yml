@@ -107,5 +107,11 @@ jobs:
             cp -f "$DexFile" ./out/"$BasenameXML_FILE".dex
           done
 
-
+      - name: Uploading release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ steps.build.outputs.DATE }}
+          body: "Commit: ${{ steps.build.outputs.SHA }}"
+          tag_name: ${{ steps.build.outputs.TAG }}
+          files: out/*.dex
           
