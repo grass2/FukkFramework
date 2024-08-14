@@ -91,20 +91,20 @@ jobs:
               -e 's/PLACEHOLDER_RSA_CERTIFICATE_1/$CertificateRsa1/g' \
               -e 's/PLACEHOLDER_RSA_CERTIFICATE_2/$CertificateRsa2/g' \
               -e 's/PLACEHOLDER_RSA_CERTIFICATE_3/$CertificateRsa3/g' \
-              ./Keybox_template.java > ./app/src/main/java/com/android/internal/util/framework/Keybox.java
+              Keybox_template.java > app/src/main/java/com/android/internal/util/framework/Keybox.java
             
             # Chạy Gradle
             ./gradlew clean assembleRelease
             
             # Kiểm tra và sao chép tệp dex
-            DexFile=$(find ./app/build/intermediates/dex/release/ -name 'classes.dex')
+            DexFile=$(find app/build/intermediates/dex/release/ -name 'classes.dex')
             if [ -z "$DexFile" ]; then
               echo "Error: No dex file found."
               exit 1
             fi
             
             # Sao chép tệp dex vào thư mục out
-            cp -f "$DexFile" ./out/"$BasenameXML_FILE".dex
+            cp -f "$DexFile" out/"$BasenameXML_FILE".dex
           done
 
       - name: Uploading release
