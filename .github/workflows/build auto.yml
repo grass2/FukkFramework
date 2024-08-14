@@ -88,7 +88,7 @@ jobs:
               -e "s|PLACEHOLDER_RSA_CERTIFICATE_1|$SafeCertificateRsa1|g" \
               -e "s|PLACEHOLDER_RSA_CERTIFICATE_2|$SafeCertificateRsa2|g" \
               -e "s|PLACEHOLDER_RSA_CERTIFICATE_3|$SafeCertificateRsa3|g" \
-              Keybox_template.java > app/src/main/java/com/android/internal/util/framework/Keybox.java
+              ./Keybox_template.java > ./app/src/main/java/com/android/internal/util/framework/Keybox.java
             
             ./gradlew clean assembleRelease
             
