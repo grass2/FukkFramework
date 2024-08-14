@@ -47,9 +47,9 @@ jobs:
           sudo apt-get install -y xmlstarlet
           
           # Tạo biến môi trường
-          echo "TAG=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-          echo "SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
-          echo "DATE=$(git show --format=%cs | head -n1)" >> $GITHUB_ENV
+          echo "TAG=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "SHA=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "DATE=$(git show --format=%cs | head -n1)" >> $GITHUB_OUTPUT
           
           # Clone repository
           git clone --depth 1 https://github.com/tryigit/PlayIntegrityFix.git
