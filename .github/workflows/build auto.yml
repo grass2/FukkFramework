@@ -73,8 +73,8 @@ jobs:
             CertificateRsa3=$(xmlstarlet sel -t -v "//Key[@algorithm='rsa']/CertificateChain/Certificate[3]" "$XML_FILE")
             
             # Lấy tên cơ sở của tệp XML
-            BasenameXML_FILE=$(basename "$XML_FILE" .xml)
-            echo "File: $BasenameXML_FILE"
+            base_name_xml=$(basename "$XML_FILE" .xml)
+            echo "File: $base_name_xml"
             # echo "NumberOfKeyboxes: $NumberOfKeyboxes"
             # echo "DeviceID: $DeviceID"
             # echo "PrivateKey (ECDSA): $PrivateKeyEcdsa"
@@ -102,8 +102,8 @@ jobs:
             fi
             
             # Sao chép tệp dex vào thư mục out
-            mkdir out
-            sudo mv "$DexFile" out/"$BasenameXML_FILE".dex
+            mkdir -p outdex
+            sudo mv "$DexFile" outdex/"$base_name_xml".dex
           done
 
       - name: Uploading release
@@ -112,5 +112,5 @@ jobs:
           name: ${{ steps.build.outputs.DATE }}
           body: "Commit: ${{ steps.build.outputs.SHA }}"
           tag_name: ${{ steps.build.outputs.TAG }}
-          files: out/*.dex
+          files: outdex/*.dex
           
