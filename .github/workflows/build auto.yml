@@ -79,9 +79,9 @@ jobs:
             # Lấy tên cơ sở của tệp XML
             BasenameXML_FILE=$(basename "$XML_FILE" .xml)
             echo "NumberOfKeyboxes: $NumberOfKeyboxes"
-            echo "DeviceID: $DeviceID"
-            echo "PrivateKey (ECDSA): $PrivateKeyEcdsa"
-            echo "PrivateKey (RSA): $PrivateKeyRsa"
+            # echo "DeviceID: $DeviceID"
+            # echo "PrivateKey (ECDSA): $PrivateKeyEcdsa"
+            # echo "PrivateKey (RSA): $PrivateKeyRsa"
             # Thay thế nội dung và xây dựng ứng dụng
             sed -e 's/PLACEHOLDER_EC_PRIVATE_KEY/$PrivateKeyEcdsa/g' \
               -e 's/PLACEHOLDER_RSA_PRIVATE_KEY/$PrivateKeyRsa/g' \
@@ -92,9 +92,9 @@ jobs:
               -e 's/PLACEHOLDER_RSA_CERTIFICATE_2/$CertificateRsa2/g' \
               -e 's/PLACEHOLDER_RSA_CERTIFICATE_3/$CertificateRsa3/g' \
               Keybox_template.java > app/src/main/java/com/android/internal/util/framework/Keybox.java
-            
+            echo "Đã thay thế!!"
             # Chạy Gradle
-            ./gradlew clean assembleRelease
+            bash gradlew clean assembleRelease
             
             # Kiểm tra và sao chép tệp dex
             DexFile=$(find app/build/intermediates/dex/release/ -name 'classes.dex')
