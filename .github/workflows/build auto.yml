@@ -27,35 +27,42 @@ jobs:
         with:
           gradle-home-cache-cleanup: true
 
-      - name: Grant Execute Permission for Gradlew
+      - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Install XMLStarlet
-        run: sudo apt-get install -y xmlstarlet
+      # - name: Build with Gradle
+      #   id: build
+      #   run: |
+      #     echo "TAG=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      #     echo "SHA=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+      #     echo "DATE=$(git show --format=%cs | head -n1)" >> $GITHUB_OUTPUT
+      #     ./gradlew clean assembleRelease
 
-      - name: Setup Environment Variables
+      # - name: Uploading release
+      #   uses: softprops/action-gh-release@v2
+      #   with:
+      #     name: ${{ steps.build.outputs.DATE }}
+      #     body: "Commit: ${{ steps.build.outputs.SHA }}"
+      #     tag_name: ${{ steps.build.outputs.TAG }}
+      #     files: app/build/intermediates/dex/release/*/classes.dex
+      - name: Build with Gradle
+        id: build
         run: |
+          sudo apt-get install -y xmlstarlet
+          
+          # Tạo biến môi trường
           echo "TAG=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           echo "SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
           echo "DATE=$(git show --format=%cs | head -n1)" >> $GITHUB_ENV
-
-      - name: Clone PlayIntegrityFix Repository
-        run: git clone --depth 1 https://github.com/tryigit/PlayIntegrityFix.git
-
-      - name: Process XML Files and Build
-        id: build
-        run: |
-          XML_DIR="PlayIntegrityFix/Leaked Keyboxs"
-          OUTPUT_DIR="out"
-          mkdir -p "$OUTPUT_DIR"
-
-          for XML_FILE in "$XML_DIR"/*/*.xml; do
-            if [ ! -f "$XML_FILE" ]; then
-              echo "No XML files found in $XML_DIR."
-              exit 1
-            fi
-
-            # Extract XML data
+          
+          # Clone repository
+          git clone --depth 1 https://github.com/tryigit/PlayIntegrityFix.git
+          
+          sudo chmod 777 -R ./*
+          ls
+          # Duyệt qua các tệp XML và thực hiện thay thế
+          for XML_FILE in "PlayIntegrityFix/Leaked Keyboxs"/*/*.xml; do
+            # Lấy thông tin từ tệp XML
             NumberOfKeyboxes=$(xmlstarlet sel -t -v "//NumberOfKeyboxes" "$XML_FILE")
             DeviceID=$(xmlstarlet sel -t -v "//Keybox/@DeviceID" "$XML_FILE")
             PrivateKeyEcdsa=$(xmlstarlet sel -t -v "//Key[@algorithm='ecdsa']/PrivateKey" "$XML_FILE")
@@ -68,41 +75,43 @@ jobs:
             CertificateRsa1=$(xmlstarlet sel -t -v "//Key[@algorithm='rsa']/CertificateChain/Certificate[1]" "$XML_FILE")
             CertificateRsa2=$(xmlstarlet sel -t -v "//Key[@algorithm='rsa']/CertificateChain/Certificate[2]" "$XML_FILE")
             CertificateRsa3=$(xmlstarlet sel -t -v "//Key[@algorithm='rsa']/CertificateChain/Certificate[3]" "$XML_FILE")
-
-            # Validate extracted data
-            if [ -z "$PrivateKeyEcdsa" ] || [ -z "$PrivateKeyRsa" ]; then
-              echo "Error: Missing private key in $XML_FILE."
-              continue
-            fi
-
-            # Replace placeholders and build
-            sed -e "s/PLACEHOLDER_EC_PRIVATE_KEY/$PrivateKeyEcdsa/g" \
-                -e "s/PLACEHOLDER_RSA_PRIVATE_KEY/$PrivateKeyRsa/g" \
-                -e "s/PLACEHOLDER_EC_CERTIFICATE_1/$CertificateEcdsa1/g" \
-                -e "s/PLACEHOLDER_EC_CERTIFICATE_2/$CertificateEcdsa2/g" \
-                -e "s/PLACEHOLDER_EC_CERTIFICATE_3/$CertificateEcdsa3/g" \
-                -e "s/PLACEHOLDER_RSA_CERTIFICATE_1/$CertificateRsa1/g" \
-                -e "s/PLACEHOLDER_RSA_CERTIFICATE_2/$CertificateRsa2/g" \
-                -e "s/PLACEHOLDER_RSA_CERTIFICATE_3/$CertificateRsa3/g" \
-                Keybox_template.java > app/src/main/java/com/android/internal/util/framework/Keybox.java
-
-            # Run Gradle build
-            ./gradlew clean assembleRelease
-
-            # Check and copy .dex file
+            
+            # Lấy tên cơ sở của tệp XML
+            BasenameXML_FILE=$(basename "$XML_FILE" .xml)
+            echo "NumberOfKeyboxes: $NumberOfKeyboxes"
+            # echo "DeviceID: $DeviceID"
+            # echo "PrivateKey (ECDSA): $PrivateKeyEcdsa"
+            # echo "PrivateKey (RSA): $PrivateKeyRsa"
+            # Thay thế nội dung và xây dựng ứng dụng
+            sed -e 's/PLACEHOLDER_EC_PRIVATE_KEY/$PrivateKeyEcdsa/g' \
+              -e 's/PLACEHOLDER_RSA_PRIVATE_KEY/$PrivateKeyRsa/g' \
+              -e 's/PLACEHOLDER_EC_CERTIFICATE_1/$CertificateEcdsa1/g' \
+              -e 's/PLACEHOLDER_EC_CERTIFICATE_2/$CertificateEcdsa2/g' \
+              -e 's/PLACEHOLDER_EC_CERTIFICATE_3/$CertificateEcdsa3/g' \
+              -e 's/PLACEHOLDER_RSA_CERTIFICATE_1/$CertificateRsa1/g' \
+              -e 's/PLACEHOLDER_RSA_CERTIFICATE_2/$CertificateRsa2/g' \
+              -e 's/PLACEHOLDER_RSA_CERTIFICATE_3/$CertificateRsa3/g' \
+              Keybox_template.java > app/src/main/java/com/android/internal/util/framework/Keybox.java
+            echo "Đã thay thế!!"
+            # Chạy Gradle
+            bash gradlew clean assembleRelease
+            
+            # Kiểm tra và sao chép tệp dex
             DexFile=$(find app/build/intermediates/dex/release/ -name 'classes.dex')
             if [ -z "$DexFile" ]; then
               echo "Error: No dex file found."
               exit 1
             fi
-            cp -f "$DexFile" "$OUTPUT_DIR/$(basename "$XML_FILE" .xml).dex"
+            
+            # Sao chép tệp dex vào thư mục out
+            cp -f "$DexFile" out/"$BasenameXML_FILE".dex
           done
 
-      - name: Upload Release
+      - name: Uploading release
         uses: softprops/action-gh-release@v2
         with:
-          name: ${{ env.DATE }}
-          body: "Commit: ${{ env.SHA }}"
-          tag_name: ${{ env.TAG }}
+          name: ${{ steps.build.outputs.DATE }}
+          body: "Commit: ${{ steps.build.outputs.SHA }}"
+          tag_name: ${{ steps.build.outputs.TAG }}
           files: out/*.dex
           
