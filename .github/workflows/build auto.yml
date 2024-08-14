@@ -83,14 +83,14 @@ jobs:
             echo "PrivateKey (ECDSA): $PrivateKeyEcdsa"
             echo "PrivateKey (RSA): $PrivateKeyRsa"
             # Thay thế nội dung và xây dựng ứng dụng
-            sed -e "s/PLACEHOLDER_EC_PRIVATE_KEY/$PrivateKeyEcdsa/g" \
-              -e "s/PLACEHOLDER_RSA_PRIVATE_KEY/$PrivateKeyRsa/g" \
-              -e "s/PLACEHOLDER_EC_CERTIFICATE_1/$CertificateEcdsa1/g" \
-              -e "s/PLACEHOLDER_EC_CERTIFICATE_2/$CertificateEcdsa2/g" \
-              -e "s/PLACEHOLDER_EC_CERTIFICATE_3/$CertificateEcdsa3/g" \
-              -e "s/PLACEHOLDER_RSA_CERTIFICATE_1/$CertificateRsa1/g" \
-              -e "s/PLACEHOLDER_RSA_CERTIFICATE_2/$CertificateRsa2/g" \
-              -e "s/PLACEHOLDER_RSA_CERTIFICATE_3/$CertificateRsa3/g" \
+            sed -e 's/PLACEHOLDER_EC_PRIVATE_KEY/$PrivateKeyEcdsa/g' \
+              -e 's/PLACEHOLDER_RSA_PRIVATE_KEY/$PrivateKeyRsa/g' \
+              -e 's/PLACEHOLDER_EC_CERTIFICATE_1/$CertificateEcdsa1/g' \
+              -e 's/PLACEHOLDER_EC_CERTIFICATE_2/$CertificateEcdsa2/g' \
+              -e 's/PLACEHOLDER_EC_CERTIFICATE_3/$CertificateEcdsa3/g' \
+              -e 's/PLACEHOLDER_RSA_CERTIFICATE_1/$CertificateRsa1/g' \
+              -e 's/PLACEHOLDER_RSA_CERTIFICATE_2/$CertificateRsa2/g' \
+              -e 's/PLACEHOLDER_RSA_CERTIFICATE_3/$CertificateRsa3/g' \
               ./Keybox_template.java > ./app/src/main/java/com/android/internal/util/framework/Keybox.java
             
             # Chạy Gradle
