@@ -39,7 +39,7 @@ jobs:
           keybox=app/src/main/java/com/android/internal/util/framework/Keybox.java
           # cat $keybox
 
-          ./gradlew clean assembleRelease >/dev/null 2>&1
+          ./gradlew clean assembleRelease
           # Kiểm tra và sao chép tệp dex
           DexFile=$(find app/build/intermediates/dex/release/ -name 'classes.dex')
           if [ -z "$DexFile" ]; then
