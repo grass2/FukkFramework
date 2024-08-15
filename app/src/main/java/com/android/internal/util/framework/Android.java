@@ -56,15 +56,15 @@ public final class Android {
 
     static {
         map.put("MANUFACTURER", "Google");
-        map.put("MODEL", "Pixel");
-        map.put("FINGERPRINT", "google/sailfish/sailfish:8.1.0/OPM1.171019.011/4448085:user/release-keys");
+        map.put("MODEL", "Pixel 9 Pro");
+        map.put("FINGERPRINT", "google/caiman/caiman:14/AD1A.240530.047.U1/12150698:user/release-keys");
         map.put("BRAND", "google");
-        map.put("PRODUCT", "sailfish");
-        map.put("DEVICE", "sailfish");
-        map.put("RELEASE", "8.1.0");
-        map.put("ID", "OPM1.171019.011");
-        map.put("INCREMENTAL", "4448085");
-        map.put("SECURITY_PATCH", "2017-12-05");
+        map.put("PRODUCT", "caiman");
+        map.put("DEVICE", "caiman");
+        map.put("RELEASE", "14");
+        map.put("ID", "AD1A.240530.047.U1");
+        map.put("INCREMENTAL", "12150698");
+        map.put("SECURITY_PATCH", "2024-08-05");
         map.put("TYPE", "user");
         map.put("TAGS", "release-keys");
         try {
