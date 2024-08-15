@@ -56,9 +56,8 @@ jobs:
           git clone --depth 1 https://github.com/real-LiHua/bk.git
           
           sudo chmod 777 -R ./*
-          ls -la
           # Duyệt qua các tệp XML và thực hiện thay thế
-          for XML_FILE in "bk/*.xml; do
+          for XML_FILE in bk/*.xml; do
             # Lấy thông tin từ tệp XML
             NumberOfKeyboxes=$(xmlstarlet sel -t -v "//NumberOfKeyboxes" "$XML_FILE")
             DeviceID=$(xmlstarlet sel -t -v "//Keybox/@DeviceID" "$XML_FILE")
