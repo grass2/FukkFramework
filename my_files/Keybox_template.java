@@ -14,9 +14,6 @@ public final class Keybox {
         public static final String CERTIFICATE_2 = """
                 PLACEHOLDER_EC_CERTIFICATE_2
                 """;
-        public static final String CERTIFICATE_3 = """
-                PLACEHOLDER_EC_CERTIFICATE_3
-                """;
     }
 
     public static final class RSA {
@@ -28,9 +25,6 @@ public final class Keybox {
                 """;
         public static final String CERTIFICATE_2 = """
                 PLACEHOLDER_RSA_CERTIFICATE_2
-                """;
-        public static final String CERTIFICATE_3 = """
-                PLACEHOLDER_RSA_CERTIFICATE_3
                 """;
     }
 }

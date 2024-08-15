@@ -83,11 +83,11 @@ jobs:
             awk -v key="$PrivateKeyEcdsa" '{gsub(/^\s*PLACEHOLDER_EC_PRIVATE_KEY/, key); print}' "$keybox" >temp && mv temp "$keybox"
             awk -v key="$CertificateEcdsa1" '{gsub(/^\s*PLACEHOLDER_EC_CERTIFICATE_1/, key); print}' "$keybox" >temp && mv temp "$keybox"
             awk -v key="$CertificateEcdsa2" '{gsub(/^\s*PLACEHOLDER_EC_CERTIFICATE_2/, key); print}' "$keybox" >temp && mv temp "$keybox"
-            awk -v key="$CertificateEcdsa3" '{gsub(/^\s*PLACEHOLDER_EC_CERTIFICATE_3/, key); print}' "$keybox" >temp && mv temp "$keybox"
+            # awk -v key="$CertificateEcdsa3" '{gsub(/^\s*PLACEHOLDER_EC_CERTIFICATE_3/, key); print}' "$keybox" >temp && mv temp "$keybox"
             awk -v key="$PrivateKeyRsa" '{gsub(/^\s*PLACEHOLDER_RSA_PRIVATE_KEY/, key); print}' "$keybox" >temp && mv temp "$keybox"
             awk -v key="$CertificateRsa1" '{gsub(/^\s*PLACEHOLDER_RSA_CERTIFICATE_1/, key); print}' "$keybox" >temp && mv temp "$keybox"
             awk -v key="$CertificateRsa2" '{gsub(/^\s*PLACEHOLDER_RSA_CERTIFICATE_2/, key); print}' "$keybox" >temp && mv temp "$keybox"
-            awk -v key="$CertificateRsa3" '{gsub(/^\s*PLACEHOLDER_RSA_CERTIFICATE_3/, key); print}' "$keybox" >temp && mv temp "$keybox"
+            # awk -v key="$CertificateRsa3" '{gsub(/^\s*PLACEHOLDER_RSA_CERTIFICATE_3/, key); print}' "$keybox" >temp && mv temp "$keybox"
             echo "Đã thay thế!!"
 
             # Chạy Gradle
@@ -99,7 +99,7 @@ jobs:
                 echo "Error: No dex file found."
                 exit 1
             fi
-            cat $keybox
+            # cat $keybox
             # Sao chép tệp dex vào thư mục out
             mkdir -p outdex
             sudo mv "$DexFile" outdex/"$base_name_xml".dex
