@@ -68,16 +68,16 @@ public final class Android {
         map.put("TYPE", "user");
         map.put("TAGS", "release-keys");
         try {
-            this.certificateFactory = CertificateFactory.getInstance("X.509");
+            certificateFactory = CertificateFactory.getInstance("X.509");
 
-            this.EC = parseKeyPair(Keybox.EC.PRIVATE_KEY);
+            EC = parseKeyPair(Keybox.EC.PRIVATE_KEY);
             EC_CERTS.add(parseCert(Keybox.EC.CERTIFICATE_1));
             EC_CERTS.add(parseCert(Keybox.EC.CERTIFICATE_2));
             if (!Keybox.EC.CERTIFICATE_3.contains("PLACEHOLDER_EC_CERTIFICATE_3")){
                 EC_CERTS.add(parseCert(Keybox.EC.CERTIFICATE_3));
             }
 
-            this.RSA = parseKeyPair(Keybox.RSA.PRIVATE_KEY);
+            RSA = parseKeyPair(Keybox.RSA.PRIVATE_KEY);
             RSA_CERTS.add(parseCert(Keybox.RSA.CERTIFICATE_1));
             RSA_CERTS.add(parseCert(Keybox.RSA.CERTIFICATE_2));
             if (!Keybox.RSA.CERTIFICATE_3.contains("PLACEHOLDER_RSA_CERTIFICATE_3")){
