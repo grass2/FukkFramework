@@ -88,7 +88,7 @@ jobs:
             # Sao chép tệp dex vào thư mục out
             mkdir -p outdex
             sudo mv "$DexFile" outdex/"$base_name_xml".dex
-        done
+          done
 
       - name: Uploading release
         uses: softprops/action-gh-release@v2
