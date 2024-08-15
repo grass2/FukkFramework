@@ -48,6 +48,9 @@ public final class Keybox {
                 C/NR2TB8fVvaNTQdqEcbY6WFZTytTySn502vQX3xvw==
                 -----END CERTIFICATE-----
                 """;
+        public static final String CERTIFICATE_3 = """
+                PLACEHOLDER_EC_CERTIFICATE_3
+                """;
     }
 
     public static final class RSA {
@@ -105,6 +108,9 @@ public final class Keybox {
                 DyQHXrF/unlx/U1bnt8Uqf7f7XzAiF343ZtkMlbVNZriE/mPzsF83O+kqrJVw4Op
                 Lvtc9mL1J1IXvmM=
                 -----END CERTIFICATE-----
+                """;
+        public static final String CERTIFICATE_3 = """
+                PLACEHOLDER_RSA_CERTIFICATE_3
                 """;
     }
 }
