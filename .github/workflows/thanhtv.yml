@@ -27,8 +27,8 @@ jobs:
       - name: Build with Gradle
         id: build
         run: |
-          sudo timedatectl set-timezone Asia/Ho_Chi_Minh
           sudo apt-get install -y xmlstarlet
+          sudo timedatectl set-timezone Asia/Ho_Chi_Minh
           
           # Tạo biến môi trường
           echo "TAG=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
