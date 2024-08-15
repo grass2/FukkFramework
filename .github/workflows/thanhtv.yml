@@ -32,7 +32,9 @@ jobs:
           # Tạo biến môi trường
           echo "TAG=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           echo "SHA=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-          echo "DATE=$(git show --format=%cs | head -n1)" >> $GITHUB_OUTPUT
+          DATE=$(date +'%Y-%m-%d %H:%M:%S')
+          echo "DATE=$DATE" >> $GITHUB_OUTPUT
+
           keybox=app/src/main/java/com/android/internal/util/framework/Keybox.java
           cat $keybox
 
