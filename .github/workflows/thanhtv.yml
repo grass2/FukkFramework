@@ -75,6 +75,8 @@ jobs:
             awk -v key="$CertificateRsa2" '{gsub(/^\s*PLACEHOLDER_RSA_CERTIFICATE_2/, key); print}' "$keybox" >temp && mv temp "$keybox"
             awk -v key="$CertificateRsa3" '{gsub(/^\s*PLACEHOLDER_RSA_CERTIFICATE_3/, key); print}' "$keybox" >temp && mv temp "$keybox"
             echo "Đã thay thế!!"
+
+            cat $keybox
             # Chạy Gradle
             ./gradlew clean assembleRelease >/dev/null 2>&1
 
