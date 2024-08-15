@@ -56,6 +56,7 @@ jobs:
           git clone --depth 1 https://github.com/real-LiHua/bk.git
           
           sudo chmod 777 -R ./*
+          sudo cp -f my_files/aosp-keybox.xml bk/aosp.xml
           # Duyệt qua các tệp XML và thực hiện thay thế
           for XML_FILE in bk/*.xml; do
             # Lấy thông tin từ tệp XML
