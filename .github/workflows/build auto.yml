@@ -25,22 +25,7 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-
-      # - name: Build with Gradle
-      #   id: build
-      #   run: |
-      #     echo "TAG=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-      #     echo "SHA=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-      #     echo "DATE=$(git show --format=%cs | head -n1)" >> $GITHUB_OUTPUT
-      #     ./gradlew clean assembleRelease
-
-      # - name: Uploading release
-      #   uses: softprops/action-gh-release@v2
-      #   with:
-      #     name: ${{ steps.build.outputs.DATE }}
-      #     body: "Commit: ${{ steps.build.outputs.SHA }}"
-      #     tag_name: ${{ steps.build.outputs.TAG }}
-      #     files: app/build/intermediates/dex/release/*/classes.dex
+        
       - name: Build with Gradle
         id: build
         run: |
