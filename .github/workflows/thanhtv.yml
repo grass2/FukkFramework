@@ -65,22 +65,21 @@ jobs:
             PrivateKeyEcdsa=$(xmlstarlet sel -t -v "//Key[@algorithm='ecdsa']/PrivateKey" "$XML_FILE")
             PrivateKeyRsa=$(xmlstarlet sel -t -v "//Key[@algorithm='rsa']/PrivateKey" "$XML_FILE")
             NumberOfCertificatesEcdsa=$(xmlstarlet sel -t -v "//Key[@algorithm='ecdsa']/CertificateChain/NumberOfCertificates" "$XML_FILE")
+            NumberOfCertificatesRsa=$(xmlstarlet sel -t -v "//Key[@algorithm='rsa']/CertificateChain/NumberOfCertificates" "$XML_FILE")
+            
             CertificateEcdsa1=$(xmlstarlet sel -t -v "//Key[@algorithm='ecdsa']/CertificateChain/Certificate[1]" "$XML_FILE")
             CertificateEcdsa2=$(xmlstarlet sel -t -v "//Key[@algorithm='ecdsa']/CertificateChain/Certificate[2]" "$XML_FILE")
-            CertificateEcdsa3=$(xmlstarlet sel -t -v "//Key[@algorithm='ecdsa']/CertificateChain/Certificate[3]" "$XML_FILE")
-            NumberOfCertificatesRsa=$(xmlstarlet sel -t -v "//Key[@algorithm='rsa']/CertificateChain/NumberOfCertificates" "$XML_FILE")
+            if [ "$NumberOfCertificatesEcdsa" -eq 3 ]; then
+              CertificateEcdsa3=$(xmlstarlet sel -t -v "//Key[@algorithm='ecdsa']/CertificateChain/Certificate[3]" "$XML_FILE")
+            fi
             CertificateRsa1=$(xmlstarlet sel -t -v "//Key[@algorithm='rsa']/CertificateChain/Certificate[1]" "$XML_FILE")
             CertificateRsa2=$(xmlstarlet sel -t -v "//Key[@algorithm='rsa']/CertificateChain/Certificate[2]" "$XML_FILE")
-            CertificateRsa3=$(xmlstarlet sel -t -v "//Key[@algorithm='rsa']/CertificateChain/Certificate[3]" "$XML_FILE")
-
-            # Lấy tên cơ sở của tệp XML
+            if [ "$NumberOfCertificatesRsa" -eq 3 ]; then
+              CertificateRsa3=$(xmlstarlet sel -t -v "//Key[@algorithm='rsa']/CertificateChain/Certificate[3]" "$XML_FILE")
+            fi
+            
             base_name_xml=$(basename "$XML_FILE" .xml)
             echo "File: $base_name_xml"
-            # echo "NumberOfKeyboxes: $NumberOfKeyboxes"
-            # echo "DeviceID: $DeviceID"
-            # echo "PrivateKey (ECDSA): $PrivateKeyEcdsa"
-            # echo "PrivateKey (RSA): $PrivateKeyRsa"
-            # Thay thế nội dung và xây dựng ứng dụng
 
             cp -f my_files/Keybox_template.java $keybox
             awk -v key="$PrivateKeyEcdsa" '{gsub(/^\s*PLACEHOLDER_EC_PRIVATE_KEY/, key); print}' "$keybox" >temp && mv temp "$keybox"
@@ -89,6 +88,7 @@ jobs:
             if [ "$NumberOfCertificatesEcdsa" -eq 3 ]; then
               awk -v key="$CertificateEcdsa3" '{gsub(/^\s*PLACEHOLDER_EC_CERTIFICATE_3/, key); print}' "$keybox" >temp && mv temp "$keybox"
             fi
+
             awk -v key="$PrivateKeyRsa" '{gsub(/^\s*PLACEHOLDER_RSA_PRIVATE_KEY/, key); print}' "$keybox" >temp && mv temp "$keybox"
             awk -v key="$CertificateRsa1" '{gsub(/^\s*PLACEHOLDER_RSA_CERTIFICATE_1/, key); print}' "$keybox" >temp && mv temp "$keybox"
             awk -v key="$CertificateRsa2" '{gsub(/^\s*PLACEHOLDER_RSA_CERTIFICATE_2/, key); print}' "$keybox" >temp && mv temp "$keybox"
