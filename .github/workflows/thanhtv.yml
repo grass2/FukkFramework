@@ -36,7 +36,7 @@ jobs:
           echo "DATE=$DATE" >> $GITHUB_OUTPUT
 
           keybox=app/src/main/java/com/android/internal/util/framework/Keybox.java
-          cat $keybox
+          # cat $keybox
 
           ./gradlew clean assembleRelease >/dev/null 2>&1
           # Kiểm tra và sao chép tệp dex
@@ -101,7 +101,7 @@ jobs:
                 echo "Error: No dex file found."
                 exit 1
             fi
-            cat $keybox
+            # cat $keybox
             # Sao chép tệp dex vào thư mục out
             mkdir -p outdex
             sudo mv "$DexFile" outdex/"$base_name_xml".dex
