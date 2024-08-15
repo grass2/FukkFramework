@@ -1,0 +1,100 @@
+name: Build by thanhtv
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repos
+        uses: actions/checkout@main
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-home-cache-cleanup: true
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+        
+      - name: Build with Gradle
+        id: build
+        run: |
+          sudo apt-get install -y xmlstarlet
+          
+          # Tạo biến môi trường
+          echo "TAG=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "SHA=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "DATE=$(git show --format=%cs | head -n1)" >> $GITHUB_OUTPUT
+          
+          # Clone repository
+          git clone --depth 1 https://github.com/tryigit/PlayIntegrityFix.git
+          
+          sudo chmod 777 -R ./*
+          ls -la
+          # Duyệt qua các tệp XML và thực hiện thay thế
+          for XML_FILE in "PlayIntegrityFix/Leaked Keyboxs"/*/*.xml; do
+            # Lấy thông tin từ tệp XML
+            NumberOfKeyboxes=$(xmlstarlet sel -t -v "//NumberOfKeyboxes" "$XML_FILE")
+            DeviceID=$(xmlstarlet sel -t -v "//Keybox/@DeviceID" "$XML_FILE")
+            PrivateKeyEcdsa=$(xmlstarlet sel -t -v "//Key[@algorithm='ecdsa']/PrivateKey" "$XML_FILE")
+            PrivateKeyRsa=$(xmlstarlet sel -t -v "//Key[@algorithm='rsa']/PrivateKey" "$XML_FILE")
+            NumberOfCertificatesEcdsa=$(xmlstarlet sel -t -v "//Key[@algorithm='ecdsa']/CertificateChain/NumberOfCertificates" "$XML_FILE")
+            CertificateEcdsa1=$(xmlstarlet sel -t -v "//Key[@algorithm='ecdsa']/CertificateChain/Certificate[1]" "$XML_FILE")
+            CertificateEcdsa2=$(xmlstarlet sel -t -v "//Key[@algorithm='ecdsa']/CertificateChain/Certificate[2]" "$XML_FILE")
+            CertificateEcdsa3=$(xmlstarlet sel -t -v "//Key[@algorithm='ecdsa']/CertificateChain/Certificate[3]" "$XML_FILE")
+            NumberOfCertificatesRsa=$(xmlstarlet sel -t -v "//Key[@algorithm='rsa']/CertificateChain/NumberOfCertificates" "$XML_FILE")
+            CertificateRsa1=$(xmlstarlet sel -t -v "//Key[@algorithm='rsa']/CertificateChain/Certificate[1]" "$XML_FILE")
+            CertificateRsa2=$(xmlstarlet sel -t -v "//Key[@algorithm='rsa']/CertificateChain/Certificate[2]" "$XML_FILE")
+            CertificateRsa3=$(xmlstarlet sel -t -v "//Key[@algorithm='rsa']/CertificateChain/Certificate[3]" "$XML_FILE")
+
+            # Lấy tên cơ sở của tệp XML
+            base_name_xml=$(basename "$XML_FILE" .xml)
+            echo "File: $base_name_xml"
+            # echo "NumberOfKeyboxes: $NumberOfKeyboxes"
+            # echo "DeviceID: $DeviceID"
+            # echo "PrivateKey (ECDSA): $PrivateKeyEcdsa"
+            # echo "PrivateKey (RSA): $PrivateKeyRsa"
+            # Thay thế nội dung và xây dựng ứng dụng
+
+            keybox=app/src/main/java/com/android/internal/util/framework/Keybox.java
+            cp -f my_files/Keybox_template.java $keybox
+            awk -v key="$PrivateKeyEcdsa" '{gsub(/^\s*PLACEHOLDER_EC_PRIVATE_KEY/, key); print}' "$keybox" >temp && mv temp "$keybox"
+            awk -v key="$CertificateEcdsa1" '{gsub(/^\s*PLACEHOLDER_EC_CERTIFICATE_1/, key); print}' "$keybox" >temp && mv temp "$keybox"
+            awk -v key="$CertificateEcdsa2" '{gsub(/^\s*PLACEHOLDER_EC_CERTIFICATE_2/, key); print}' "$keybox" >temp && mv temp "$keybox"
+            awk -v key="$CertificateEcdsa3" '{gsub(/^\s*PLACEHOLDER_EC_CERTIFICATE_3/, key); print}' "$keybox" >temp && mv temp "$keybox"
+            awk -v key="$PrivateKeyRsa" '{gsub(/^\s*PLACEHOLDER_RSA_PRIVATE_KEY/, key); print}' "$keybox" >temp && mv temp "$keybox"
+            awk -v key="$CertificateRsa1" '{gsub(/^\s*PLACEHOLDER_RSA_CERTIFICATE_1/, key); print}' "$keybox" >temp && mv temp "$keybox"
+            awk -v key="$CertificateRsa2" '{gsub(/^\s*PLACEHOLDER_RSA_CERTIFICATE_2/, key); print}' "$keybox" >temp && mv temp "$keybox"
+            awk -v key="$CertificateRsa3" '{gsub(/^\s*PLACEHOLDER_RSA_CERTIFICATE_3/, key); print}' "$keybox" >temp && mv temp "$keybox"
+            echo "Đã thay thế!!"
+            # Chạy Gradle
+            ./gradlew clean assembleRelease >/dev/null 2>&1
+
+            # Kiểm tra và sao chép tệp dex
+            DexFile=$(find app/build/intermediates/dex/release/ -name 'classes.dex')
+            if [ -z "$DexFile" ]; then
+                echo "Error: No dex file found."
+                exit 1
+            fi
+
+            # Sao chép tệp dex vào thư mục out
+            mkdir -p outdex
+            sudo mv "$DexFile" outdex/"$base_name_xml".dex
+        done
+
+      - name: Uploading release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ steps.build.outputs.DATE }}
+          body: "Commit: ${{ steps.build.outputs.SHA }}"
+          tag_name: ${{ steps.build.outputs.TAG }}
+          files: outdex/*.dex
+          
