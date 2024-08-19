@@ -46,6 +46,16 @@ jobs:
           MODEL=$(echo "$json_content" | jq -r '.MODEL')
           PRODUCT=$(echo "$json_content" | jq -r '.PRODUCT')
           SECURITY_PATCH=$(echo "$json_content" | jq -r '.SECURITY_PATCH')
+          
+          echo "ID: $ID"
+          echo "BRAND: $BRAND"
+          echo "DEVICE: $DEVICE"
+          echo "FINGERPRINT: $FINGERPRINT"
+          echo "MANUFACTURER: $MANUFACTURER"
+          echo "MODEL: $MODEL"
+          echo "PRODUCT: $PRODUCT"
+          echo "SECURITY_PATCH: $SECURITY_PATCH"
+
           android_java="app/src/main/java/com/android/internal/util/framework/Android.java"
           sed -i "s/map.put(\"MANUFACTURER\", \".*\");/map.put(\"MANUFACTURER\", \"$MANUFACTURER\");/" "$android_java"
           sed -i "s/map.put(\"MODEL\", \".*\");/map.put(\"MODEL\", \"$MODEL\");/" "$android_java"
