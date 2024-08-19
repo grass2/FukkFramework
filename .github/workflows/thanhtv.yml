@@ -35,7 +35,28 @@ jobs:
           echo "SHA=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
           DATE=$(date +'%Y-%m-%d %H:%M:%S')
           echo "DATE=$DATE" >> $GITHUB_OUTPUT
-
+          
+          json_url="https://raw.githubusercontent.com/chiteroman/PlayIntegrityFix/main/module/pif.json"
+          json_content=$(curl -k  "$json_url")
+          ID=$(echo "$json_content" | jq -r '.ID')
+          BRAND=$(echo "$json_content" | jq -r '.BRAND')
+          DEVICE=$(echo "$json_content" | jq -r '.DEVICE')
+          FINGERPRINT=$(echo "$json_content" | jq -r '.FINGERPRINT')
+          MANUFACTURER=$(echo "$json_content" | jq -r '.MANUFACTURER')
+          MODEL=$(echo "$json_content" | jq -r '.MODEL')
+          PRODUCT=$(echo "$json_content" | jq -r '.PRODUCT')
+          SECURITY_PATCH=$(echo "$json_content" | jq -r '.SECURITY_PATCH')
+          android_java="app/src/main/java/com/android/internal/util/framework/Android.java"
+          sed -i "s/map.put(\"MANUFACTURER\", \".*\");/map.put(\"MANUFACTURER\", \"$MANUFACTURER\");/" "$android_java"
+          sed -i "s/map.put(\"MODEL\", \".*\");/map.put(\"MODEL\", \"$MODEL\");/" "$android_java"
+          sed -i "s|map.put(\"FINGERPRINT\", \".*\");|map.put(\"FINGERPRINT\", \"$FINGERPRINT\");|" "$android_java"
+          sed -i "s/map.put(\"BRAND\", \".*\");/map.put(\"BRAND\", \"$BRAND\");/" "$android_java"
+          sed -i "s/map.put(\"PRODUCT\", \".*\");/map.put(\"PRODUCT\", \"$PRODUCT\");/" "$android_java"
+          sed -i "s/map.put(\"DEVICE\", \".*\");/map.put(\"DEVICE\", \"$DEVICE\");/" "$android_java"
+          sed -i "s/map.put(\"ID\", \".*\");/map.put(\"ID\", \"$ID\");/" "$android_java"
+          sed -i "s/map.put(\"SECURITY_PATCH\", \".*\");/map.put(\"SECURITY_PATCH\", \"$SECURITY_PATCH\");/" "$android_java"
+          echo "Các giá trị đã được cập nhật trong $android_java"
+          
           keybox=app/src/main/java/com/android/internal/util/framework/Keybox.java
           # cat $keybox
 
