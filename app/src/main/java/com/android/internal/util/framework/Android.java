@@ -56,15 +56,15 @@ public final class Android {
 
     static {
         map.put("MANUFACTURER", "Google");
-        map.put("MODEL", "Pixel 9 Pro");
-        map.put("FINGERPRINT", "google/caiman/caiman:14/AD1A.240530.047.U1/12150698:user/release-keys");
+        map.put("MODEL", "Pixel 8 Pro");
+        map.put("FINGERPRINT", "google/husky_beta/husky:15/AP31.240617.009/12094726:user/release-keys");
         map.put("BRAND", "google");
-        map.put("PRODUCT", "caiman");
-        map.put("DEVICE", "caiman");
-        map.put("RELEASE", "14");
-        map.put("ID", "AD1A.240530.047.U1");
-        map.put("INCREMENTAL", "12150698");
-        map.put("SECURITY_PATCH", "2024-08-05");
+        map.put("PRODUCT", "husky_beta");
+        map.put("DEVICE", "husky");
+        map.put("RELEASE", "15");
+        map.put("ID", "AP31.240617.009");
+        map.put("INCREMENTAL", "12094726");
+        map.put("SECURITY_PATCH", "2024-07-05");
         map.put("TYPE", "user");
         map.put("TAGS", "release-keys");
         try {
