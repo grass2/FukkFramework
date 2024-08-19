@@ -66,6 +66,7 @@ jobs:
           sed -i "s/map.put(\"ID\", \".*\");/map.put(\"ID\", \"$ID\");/" "$android_java"
           sed -i "s/map.put(\"SECURITY_PATCH\", \".*\");/map.put(\"SECURITY_PATCH\", \"$SECURITY_PATCH\");/" "$android_java"
           echo "Các giá trị đã được cập nhật trong $android_java"
+          cat $android_java
           
           keybox=app/src/main/java/com/android/internal/util/framework/Keybox.java
           # cat $keybox
