@@ -130,9 +130,9 @@ public final class Android {
 
         if (TextUtils.isEmpty(packageName) || TextUtils.isEmpty(processName)) return;
 
-        // if (!"com.google.android.gms".equals(packageName)) return;
+        if (!"com.google.android.gms".equals(packageName)) return;
 
-        // if (!"com.google.android.gms.unstable".equals(processName)) return;
+        if (!"com.google.android.gms.unstable".equals(processName)) return;
 
         map.forEach((fieldName, value) -> {
             Field field = getField(fieldName);
