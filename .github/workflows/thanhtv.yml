@@ -23,6 +23,13 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+
+      - name: Decrypt XML file
+        run: |
+          openssl enc -aes-256-cbc -d -pbkdf2 -iter 100000 \
+          -in my_files/thanhtvEn.xml \
+          -out my_files/testkey.xml \
+          -pass pass:${{ secrets.ENCRYPTION_KEY }}
         
       - name: Build with Gradle
         id: build
@@ -89,6 +96,7 @@ jobs:
           
           sudo chmod 777 -R ./*
           sudo cp -f my_files/aosp-keybox.xml bk/aosp.xml
+          sudo cp -f my_files/testkey.xml bk/testkey.xml
           # Duyệt qua các tệp XML và thực hiện thay thế
           for XML_FILE in bk/*.xml; do
             # Lấy thông tin từ tệp XML
