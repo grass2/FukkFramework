@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
-@Obfuscate
+// @Obfuscate
 public final class Android {
     private static final String TAG = "chiteroman";
     private static final PEMKeyPair EC, RSA;
