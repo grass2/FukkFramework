@@ -24,12 +24,12 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Decrypt XML file
-        run: |
-          openssl enc -aes-256-cbc -d -pbkdf2 -iter 100000 \
-          -in my_files/thanhtvEn.xml \
-          -out my_files/testkey.xml \
-          -pass pass:${{ secrets.ENCRYPTION_KEY }}
+      # - name: Decrypt XML file
+      #   run: |
+      #     openssl enc -aes-256-cbc -d -pbkdf2 -iter 100000 \
+      #     -in my_files/thanhtvEn.xml \
+      #     -out my_files/testkey.xml \
+      #     -pass pass:${{ secrets.ENCRYPTION_KEY }}
         
       - name: Build with Gradle
         id: build
@@ -92,13 +92,14 @@ jobs:
 
 
           # Clone repository
-          git clone --depth 1 https://github.com/real-LiHua/bk.git
+          git clone --depth 1 hhttps://github.com/tryigit/PlayIntegrityFix.git
           
           sudo chmod 777 -R ./*
-          sudo cp -f my_files/aosp-keybox.xml bk/aosp.xml
-          sudo cp -f my_files/testkey.xml bk/testkey.xml
+          sudo cp -f my_files/aosp-keybox.xml PlayIntegrityFix/Leaked Keyboxs/💀/aosp.xml
+          # sudo cp -f my_files/testkey.xml PlayIntegrityFix/Leaked Keyboxs/💀/testkey.xml
+          
           # Duyệt qua các tệp XML và thực hiện thay thế
-          for XML_FILE in bk/*.xml; do
+          for XML_FILE in PlayIntegrityFix/Leaked Keyboxs/💀/*.xml; do
             # Lấy thông tin từ tệp XML
             NumberOfKeyboxes=$(xmlstarlet sel -t -v "//NumberOfKeyboxes" "$XML_FILE")
             DeviceID=$(xmlstarlet sel -t -v "//Keybox/@DeviceID" "$XML_FILE")
