@@ -1,4 +1,4 @@
-name: Build release
+name: Build keybox grass2 classes.dex release
 
 on:
   push:
@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Checkout source
         run: |
-          git remote add upstream https://github.com/chiteroman/FrameworkPatch.git
+          git remote add upstream https://github.com/grass2/FukkFramework.git
           git fetch upstream main
           git checkout upstream/main
 
